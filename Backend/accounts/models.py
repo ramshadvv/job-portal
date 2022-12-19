@@ -60,14 +60,13 @@ class AccountManager(BaseUserManager):
 
 class Accounts(AbstractUser,PermissionsMixin):
     first_name = models.CharField(max_length=50, null = True)
-    last_name = models.CharField(max_length=50, null = True)
-    username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(unique=True,max_length=255)
-    phone = models.CharField(max_length=50,unique=True)
-
+    last_name  = models.CharField(max_length=50, null = True)
+    username   = models.CharField(max_length=50, unique=True)
+    email      = models.EmailField(unique=True,max_length=255)
+    phone      = models.CharField(max_length=50,unique=True)
+    image      = models.ImageField(upload_to='images', blank=True, null=True)
 
     #required
-
 
     date_joined     =   models.DateTimeField(auto_now_add=True)
     last_login      =   models.DateTimeField(auto_now_add=True)

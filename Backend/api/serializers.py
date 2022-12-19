@@ -7,17 +7,18 @@ class AccountsSerializer(serializers.ModelSerializer):
     status = serializers.CharField(style={'input':'text'},write_only = True)
     class Meta:
         model = Accounts
-        fields = ['id','first_name','last_name','email','username','phone','password','password2','is_active','status']
+        fields = ['id','first_name','last_name','email','username','phone','password','password2','is_active','status','image']
 
         extra_kwargs = {'password':{'write_only':True}}
 
     def save(self):
         register = Accounts(
-            username = self.validated_data['username'],
-            email = self.validated_data['email'],
-            phone = self.validated_data['phone'],
-            first_name = self.validated_data['first_name'],
-            last_name = self.validated_data['last_name']
+            username    = self.validated_data['username'],
+            email       = self.validated_data['email'],
+            phone       = self.validated_data['phone'],
+            first_name  = self.validated_data['first_name'],
+            last_name   = self.validated_data['last_name'],
+            image       = self.validated_data['image'],
         )
         
         status = self.validated_data['status']
