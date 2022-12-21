@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import {useState, useContext} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {useForm} from 'react-hook-form'
 import axios from 'axios';
 import BaseUrl from '../../context/BaseUrl';
@@ -21,6 +21,7 @@ import {useNavigate} from 'react-router-dom';
 import Swal from 'sweetalert2'
 import AuthContext from '../../context/AuthContext';
 import NavBar from './NavBar';
+import Spinner from "../../utils/Spinner";
 
 function Copyright(props) {
   return (
@@ -37,25 +38,21 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function BioSignup() {
-    const { register, handleSubmit, formState: {errors}, } = useForm()
+export default function EditBio() {
+    const { register, handleSubmit, formState: {errors}, reset } = useForm()
     const navigate = useNavigate();
     const {authToken} = useContext(AuthContext)
+    const [bio, setBio] = useState()
+    const [loading, setLoading] = useState(false)
 
-    const [userData, setUserData] = useState({
-      biography:"",
-      linkedin: "",
-      github: "",
-      resume: "",
-  });
+    useEffect(()=>{
+      fetchBioDetails(authToken)
+    },[])
 
   const createMyModelEntry = async (data) => {
     let form_data = new FormData();
-    if (data.resume){
-      console.log(data.resume.name)
-      console.log(data.resume)
-      form_data.append("resume", data.resume, data.resume.name);
-    }
+    if (data.resume && data.resume != bio.resume)
+      form_data.append("resume",data.resume[0],data.resume.name);
     form_data.append("biography", data.biography);
     form_data.append("linkedin", data.linkedin);
     form_data.append("github", data.github);
@@ -63,46 +60,40 @@ export default function BioSignup() {
     return form_data
   };
 
-  const handleChange= (e) => {
-    let data = e.target.value
-    console.log(userData)
-    if(typeof(data) === 'string'){
-      data = data.toUpperCase()
-    }
-    setUserData({
-      ...userData,
-      [e.target.name]: data,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-    
-  const onSubmit = async ()=> {
+  const onSubmit = async (data)=> {
     try {
-      let form_data = await createMyModelEntry(userData)
-      console.log(authToken);
-      await axios.post(BaseUrl + '/addbio/', form_data,{
+      setLoading(true)
+      let form_data = await createMyModelEntry(data);
+      await axios.put(`${BaseUrl}/editbio/${bio.id}/`, form_data,{
         headers:{
           "Authorization" : `Bearer ${authToken}`,
           'Content-Type' :'multipart/form-data', 
         }
       }).then(async (response) => {
+        setLoading(false)
         console.log(response)
         navigate('/profile')  
       });
     } catch (error) {
+      setLoading(false)
         console.log(error);
-        setUserData({
-        status: false,
-        });
         Swal.fire("Error", "Something went wrong");
     }
 
+  }
+
+  const fetchBioDetails=async(authToken)=>{
+    setLoading(true)
+    const result = await axios.get(`${BaseUrl}/bio/`, { 
+      headers: {"Authorization" : `Bearer ${authToken}`} 
+    })
+    setBio(result.data)
+    reset(result.data)
+    setLoading(false)
+  }
+
+  if(loading){
+    return <Spinner />
   }
 
   return (
@@ -130,14 +121,15 @@ export default function BioSignup() {
               <Grid item xs={12}>
                 <TextField
                     {...register("biography")}
-                    onChange={handleChange}
                     autoComplete="given-name"
+                    focused
                     name="biography"
                     multiline
                     required
                     fullWidth
                     id="biography"
                     label="Biography"
+                    // value={bio.length!==0 ? bio.biography :''}
                     error={!!errors.biography}
                     helperText={errors.biography ? errors.biography.message : ''}
                     autoFocus />
@@ -145,12 +137,13 @@ export default function BioSignup() {
               <Grid item xs={12}>
                 <TextField
                     {...register("linkedin")}
-                    onChange={handleChange}
                     required
+                    focused
                     fullWidth
                     id="linkedin"
                     label="Linkedin link"
                     name="linkedin"
+                    // value={bio.length!==0 ? bio.linkedin : ''}
                     autoComplete="family-name"
                     error={!!errors.linkedin}
                     helperText={errors.linkedin ? errors.linkedin.message : ''}
@@ -159,12 +152,13 @@ export default function BioSignup() {
               <Grid item xs={12}>
                 <TextField
                     {...register("github")}
-                    onChange={handleChange}
                     required
+                    focused
                     fullWidth
                     id="github"
                     label="Github link"
                     name="github"
+                    // value={bio.length!==0 ? bio.github : ''}
                     autoComplete="family-name"
                     error={!!errors.github}
                     helperText={errors.github ? errors.github.message : ''}
@@ -172,10 +166,7 @@ export default function BioSignup() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                    {...register("resume", {
-                        required: "Resume is required",
-                    })}
-                    onChange={handleFileChange}
+                    {...register("resume")}
                     required
                     fullWidth
                     focused

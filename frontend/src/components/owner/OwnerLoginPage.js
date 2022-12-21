@@ -13,7 +13,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-import { Navigate } from 'react-router-dom';
+// import { Navigate } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -30,17 +30,17 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function OwnerLoginPage() {
     
-    let {loginUser, user} = useContext(AuthContext)
+    let {loginOwner} = useContext(AuthContext)
     
-    if(user){
-        return <Navigate to='/home' />
-    }
+    // if(user){
+    //     return <Navigate to='/home' />
+    // }
+    
     const toLink = [
         {link:'/signup', label:"Don't have an account? Sign Up"}, 
-        {link:'/owner', label:"Login as Owner?"},
-        {link:'/staff', label:"Login as Employer?"}
+        {link:'/', label:"Login as User?"}
     ]
     return (
         <ThemeProvider theme={theme}>
@@ -60,7 +60,7 @@ export default function SignIn() {
             <Typography component="h1" variant="h5">
                 Sign in
             </Typography>
-            <Box component="form" onSubmit={loginUser} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={loginOwner} noValidate sx={{ mt: 1 }}>
                 <TextField
                 margin="normal"
                 required

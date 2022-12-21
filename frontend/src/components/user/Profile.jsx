@@ -3,13 +3,13 @@ import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
 import CardContent from '@mui/material/CardContent';
 // import CardMedia from '@mui/material/CardMedia';
-import InputLabel from '@mui/material/InputLabel';
+// import InputLabel from '@mui/material/InputLabel';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+// import Box from '@mui/material/Box';
 
 import NavBar from './NavBar';
 import {useEffect,useContext, useState} from "react";
@@ -76,7 +76,6 @@ function Profile() {
             }
         }).then((response) =>{
             setLoading(false)
-            console.log(response.data) 
             if(response.status === 200){
                 setSkill(response.data)
             }
@@ -161,18 +160,32 @@ function Profile() {
         fetchSkill(authToken)
         fetchResume(authToken)
     }, [authToken])
-  
     const toAddEducation = () =>{
         navigate('/educationsignup')
+    }
+    const toEditEducation = (id) =>{
+        navigate(`/editeducation/${id}`)
     }
     const toAddExperience = () =>{
         navigate('/experiencesignup')
     }
+    const toEditExperience = (id) =>{
+        navigate(`/editexperience/${id}`)
+    }
     const toAddSkill = () =>{
         navigate('/skillsignup')
     }
+    const toEditSkill = (id) =>{
+        navigate(`/editskill/${id}`)
+    }
     const toAddResume = () =>{
         navigate('/biosignup')
+    }
+    const toEditResume = () =>{
+        navigate('/editbio')
+    }
+    const toEditProfile = () =>{
+        navigate('/editprofile')
     }
 
     if(loading){
@@ -194,7 +207,7 @@ function Profile() {
                                 <ListItem>
                                 <ListItemText
                                     primary="Resume"
-                                />
+                                    />
                                 {res.length === 0?<Button size="small" onClick={toAddResume}>Add</Button>:''}
                                 </ListItem>
                                 <ListItem>
@@ -206,13 +219,13 @@ function Profile() {
                                 <ListItem>
                                 <ListItemText
                                     primary="Experience"
-                                />
+                                    />
                                 <Button size="small" onClick={toAddExperience}>Add</Button>
                                 </ListItem>
                                 <ListItem>
                                 <ListItemText
                                     primary="Skills"
-                                />
+                                    />
                                 <Button size="small"  onClick={toAddSkill}>Add</Button>
                                 </ListItem>
                             </List>
@@ -225,7 +238,7 @@ function Profile() {
                             <Typography gutterBottom sx={{fontSize:'20px', fontWeight:700}} component="div">
                             Resume
                             {res.length !== 0?
-                            <Button size="small" sx={{marginLeft:'41rem'}}>Edit</Button>:<Button size="small" sx={{marginLeft:'41rem'}} onClick={toAddResume}>Add</Button>}
+                            <Button size="small" sx={{marginLeft:'41rem'}} onClick={toEditResume}>Edit</Button>:<Button size="small" sx={{marginLeft:'41rem'}} onClick={toAddResume}>Add</Button>}
                             </Typography>
                             <hr />
                             <List>
@@ -234,14 +247,25 @@ function Profile() {
                                     <ListItem>
                                     <ListItemText
                                         primary={user.username}
-                                    />
+                                        />
                                         </ListItem>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
                                             
                                             BIOGRAPHY : {res.biography}
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
-                                            {res.resume}
+                                            
+                                            LINKED IN <span style={{marginLeft:'17px'}}> : </span><a href={res.linkedin}>{res.linkedin}</a>
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
+                                            
+                                            GITHUB <span style={{marginLeft:'35px'}}> : </span><a href={res.github}>{res.github}</a>
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
+                                            {/* {res.resume} */}
+                                        <a href={BaseUrl + res.resume}>
+                                            <Button size="large" sx={{marginLeft:'25rem'}}>OPEN</Button>
+                                        </a>
                                         </Typography>
                                     </>
                                     :<ListItemText><Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
@@ -268,7 +292,7 @@ function Profile() {
                                         <ListItemText
                                             primary={value.course}
                                         />
-                                        <Button size="small">Edit</Button>
+                                        <Button size="small" onClick={()=>toEditEducation(value.id)}>Edit</Button>
                                         <Button size="small" onClick={()=>deleteEducation(value.id)}>Delete</Button>
                                         </ListItem>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
@@ -301,7 +325,7 @@ function Profile() {
                                         <ListItemText
                                             primary={value.companyname}
                                         />
-                                        <Button size="small">Edit</Button>
+                                        <Button size="small" onClick={()=>toEditExperience(value.id)}>Edit</Button>
                                         <Button size="small" onClick={()=>deleteExperience(value.id)}>Delete</Button>
                                         </ListItem>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
@@ -335,7 +359,7 @@ function Profile() {
                                         <ListItemText
                                             primary={value.skill}
                                         />
-                                        <Button size="small">Edit</Button>
+                                        <Button size="small" onClick={()=>toEditSkill(value.id)}>Edit</Button>
                                         <Button size="small" onClick={()=>deleteSkill(value.id)}>Delete</Button>
                                         </ListItem>
                                         {/* <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
@@ -357,12 +381,9 @@ function Profile() {
                         <CardContent>
                             <Typography gutterBottom sx={{fontSize:'20px', fontWeight:700}} component="div">
                             Personal Details
-                            <Button size="small" sx={{marginLeft:'36rem'}}>EDIT</Button>
+                            <Button size="small" sx={{marginLeft:'36rem'}} onClick={toEditProfile}>EDIT</Button>
                             </Typography>
                             <hr />
-                            {/* <Typography variant="body2" color="text.secondary" sx={{marginTop:'2rem'}}>
-                                Select from this list
-                            </Typography> */}
                             <List>
                                 <ListItem>
                                 <ListItemText

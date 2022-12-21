@@ -1,5 +1,6 @@
 from django.shortcuts import HttpResponse
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status, permissions
 # from rest_framework.parsers import MultiPartParser, FormParser
@@ -47,6 +48,14 @@ class EducationView(APIView):
         education.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
 
+@api_view(['GET'])
+def getEducation(request, id):
+    education = Education.objects.get(id = id)
+    serializer = EducationSerializer(instance=education)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 class ExperienceView(APIView):
     permission_classes = [permissions.IsAuthenticated,]
 
@@ -91,6 +100,11 @@ class ExperienceView(APIView):
         experience.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
 
+@api_view(['GET'])
+def getExperience(request, id):
+    experience = Experience.objects.get(id = id)
+    serializer = ExperienceSerializer(instance=experience)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 class SkillView(APIView):
     permission_classes = [permissions.IsAuthenticated,]
@@ -127,6 +141,12 @@ class SkillView(APIView):
         skill.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
 
+@api_view(['GET'])
+def getSkills(request, id):
+    skill = Skills.objects.get(id = id)
+    serializer = SkillsSerializer(instance=skill)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 class BioView(APIView):
     permission_classes = [permissions.IsAuthenticated,]
 
@@ -155,11 +175,12 @@ class BioView(APIView):
         bio       = Bio.objects.get(id=id)
         data      = request.data
         bio.biography = data['biography']
-        bio.resume = data['resume']
+        if 'resume' in data:
+            bio.resume = data['resume']
         bio.linkedin = data['linkedin']
         bio.github = data['github']
         bio.save()
-        serializer = SkillsSerializer(instance=bio)
+        serializer = BioSerializer(instance=bio)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
     def delete(self, request, id):

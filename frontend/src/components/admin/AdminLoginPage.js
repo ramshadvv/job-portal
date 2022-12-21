@@ -13,7 +13,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-import { Navigate } from 'react-router-dom';
+// import { Navigate } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -30,18 +30,14 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function AdminLoginPage() {
     
-    let {loginUser, user} = useContext(AuthContext)
+    let {loginAdmin} = useContext(AuthContext)
     
-    if(user){
-        return <Navigate to='/home' />
-    }
-    const toLink = [
-        {link:'/signup', label:"Don't have an account? Sign Up"}, 
-        {link:'/owner', label:"Login as Owner?"},
-        {link:'/staff', label:"Login as Employer?"}
-    ]
+    // if(user){
+    //     return <Navigate to='/home' />
+    // }
+
     return (
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
@@ -60,7 +56,7 @@ export default function SignIn() {
             <Typography component="h1" variant="h5">
                 Sign in
             </Typography>
-            <Box component="form" onSubmit={loginUser} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={loginAdmin} noValidate sx={{ mt: 1 }}>
                 <TextField
                 margin="normal"
                 required
@@ -93,24 +89,18 @@ export default function SignIn() {
                 >
                 Sign In
                 </Button>
-                <Grid container>
+                {/* <Grid container>
                 <Grid item xs>
-                    {/* <Link href="#" variant="body2">
+                    <Link href="#" variant="body2">
                     Forgot password?
-                    </Link> */}
+                    </Link>
                 </Grid>
-                <Grid item sx={{display:'flex',flexDirection:'column'}}>
-                    {
-                        toLink.map((values)=>{
-                            return(
-                                    <Link href={values.link} variant="body2" sx={{marginBottom:'1rem'}}>
-                                    {values.label}
-                                    </Link>
-                            )
-                        })
-                    }
+                <Grid item>
+                    <Link href="/admin/signup" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                    </Link>
                 </Grid>
-                </Grid>
+                </Grid> */}
             </Box>
             </Box>
             <Copyright sx={{ mt: 8, mb: 4 }} />

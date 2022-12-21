@@ -68,5 +68,29 @@ class getUser(APIView):
         user = Accounts.object.get(username = request.user)
         user = AccountsSerializer(user)
         return Response(user.data, status=status.HTTP_200_OK)
+    
+    def put(self, request):
+        user = request.user
+        item = Accounts.objects.get(username = user)
+        data = request.data
+        print(data['last_name'])
+        item.first_name = data['first_name']
+        item.last_name = data['last_name']
+        if Accounts.objects.filter(username = data['username']).exists() and item.username != data['username']:
+            return Response({'error':'Username already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        item.username = data['username']
+        if Accounts.objects.filter(email = data['email']).exists() and item.email != data['email']:
+            return Response({'error':'Email already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        item.email = data['email']
+        if Accounts.objects.filter(phone = data['phone']).exists() and item.phone != data['phone']:
+            return Response({'error':'Phone number is already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        if len(data['phone']) != 10:
+            return Response({'error':'Phone number is not Valid!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        item.phone = data['phone']
+        if 'image' in data:
+            item.image = data['image']
+        item.save()
+        serializer = AccountsSerializer(instance=item)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 

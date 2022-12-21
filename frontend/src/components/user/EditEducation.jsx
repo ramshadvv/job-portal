@@ -12,15 +12,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
-import {useState, useContext} from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {useForm} from 'react-hook-form'
 import axios from 'axios';
 import BaseUrl from '../../context/BaseUrl';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate,useParams} from 'react-router-dom';
 import Swal from 'sweetalert2'
 import AuthContext from '../../context/AuthContext';
 import NavBar from './NavBar';
+import Spinner from "../../utils/Spinner";
 
 function Copyright(props) {
   return (
@@ -37,72 +41,69 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function BioSignup() {
-    const { register, handleSubmit, formState: {errors}, } = useForm()
+const year_list = [2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009]
+
+export default function EditEducation() {
+    const { register, handleSubmit, formState: {errors},reset } = useForm()
     const navigate = useNavigate();
+    const values = useParams()
     const {authToken} = useContext(AuthContext)
+    const [loading, setLoading] = useState(false)
 
-    const [userData, setUserData] = useState({
-      biography:"",
-      linkedin: "",
-      github: "",
-      resume: "",
-  });
+    const [year, setYear] = useState(2022)
+    const [educ, setEduc] = useState()
 
+  const yearChange=(e)=>{
+    setYear(e.target.value);
+  }
+  
   const createMyModelEntry = async (data) => {
     let form_data = new FormData();
-    if (data.resume){
-      console.log(data.resume.name)
-      console.log(data.resume)
-      form_data.append("resume", data.resume, data.resume.name);
-    }
-    form_data.append("biography", data.biography);
-    form_data.append("linkedin", data.linkedin);
-    form_data.append("github", data.github);
+    form_data.append("course", data.course);
+    form_data.append("university", data.university);
+    form_data.append("passout", data.passout);
 
     return form_data
   };
 
-  const handleChange= (e) => {
-    let data = e.target.value
-    console.log(userData)
-    if(typeof(data) === 'string'){
-      data = data.toUpperCase()
-    }
-    setUserData({
-      ...userData,
-      [e.target.name]: data,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.files[0],
-    });
-  };
-    
-  const onSubmit = async ()=> {
+  const onSubmit = async (data)=> {
     try {
-      let form_data = await createMyModelEntry(userData)
-      console.log(authToken);
-      await axios.post(BaseUrl + '/addbio/', form_data,{
+      setLoading(true)
+      let form_data = await createMyModelEntry(data);
+      await axios.put(`${BaseUrl}/editeducation/${educ.id}/`, form_data,{
         headers:{
           "Authorization" : `Bearer ${authToken}`,
           'Content-Type' :'multipart/form-data', 
         }
       }).then(async (response) => {
+        setLoading(false)
         console.log(response)
         navigate('/profile')  
       });
     } catch (error) {
+      setLoading(false)
         console.log(error);
-        setUserData({
-        status: false,
-        });
         Swal.fire("Error", "Something went wrong");
     }
 
+  }
+
+  const fetchEducDetails=async(authToken)=>{
+    setLoading(true)
+    const result = await axios.get(`${BaseUrl}/education/${values.id}/`, {
+      headers: {"Authorization" : `Bearer ${authToken}`} 
+    })
+    setEduc(result.data)
+    reset(result.data)
+    setLoading(false)
+  }
+
+  useEffect(()=>{
+    fetchEducDetails(authToken)
+  },[])
+
+  if(loading){
+    return <Spinner />
   }
 
   return (
@@ -123,70 +124,60 @@ export default function BioSignup() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Resume
+            Academic
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
-                    {...register("biography")}
-                    onChange={handleChange}
+                    {...register("course")}
+                    
                     autoComplete="given-name"
-                    name="biography"
-                    multiline
+                    name="course"
                     required
+                    focused
                     fullWidth
-                    id="biography"
-                    label="Biography"
-                    error={!!errors.biography}
-                    helperText={errors.biography ? errors.biography.message : ''}
-                    autoFocus />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                    {...register("linkedin")}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                    id="linkedin"
-                    label="Linkedin link"
-                    name="linkedin"
-                    autoComplete="family-name"
-                    error={!!errors.linkedin}
-                    helperText={errors.linkedin ? errors.linkedin.message : ''}
+                    id="course"
+                    label="Course"
+                    error={!!errors.course}
+                    helperText={errors.course ? errors.course.message : ''}
+                    autoFocus
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                    {...register("github")}
-                    onChange={handleChange}
-                    required
-                    fullWidth
-                    id="github"
-                    label="Github link"
-                    name="github"
-                    autoComplete="family-name"
-                    error={!!errors.github}
-                    helperText={errors.github ? errors.github.message : ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                    {...register("resume", {
-                        required: "Resume is required",
-                    })}
-                    onChange={handleFileChange}
+                    {...register("university")}
+                    
                     required
                     fullWidth
                     focused
-                    id="resume"
-                    label="Resume"
-                    name="resume"
-                    type="file"
+                    id="university"
+                    label="University"
+                    name="university"
                     autoComplete="family-name"
-                    error={!!errors.resume}
-                    helperText={errors.resume ? errors.resume.message : ''}
+                    error={!!errors.university}
+                    helperText={errors.university ? errors.university.message : ''}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-label">Passout Year</InputLabel>
+                <Select
+                    {...register("passout")}
+                    onChange={yearChange}
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="PassOut Year"
+                  focused
+                  value={year}
+                  fullWidth
+                  name="passout"
+                >
+                  {year_list.map((years) =>{
+                    return(
+                      <MenuItem value={years} key={years}>{years}</MenuItem>
+                    )
+                  })}
+                </Select>
               </Grid>
             </Grid>
             <Button

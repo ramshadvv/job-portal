@@ -17,9 +17,11 @@ export const AuthProvider = ({children})=> {
     let [authToken,setAuthToken] = useState(token?.access)
     let [adminToken,setAdminToken] = useState()
     let [ownerToken,setOwnerToken] = useState()
+    let [staffToken,setStaffToken] = useState()
     let [user, setUser] = useState(JSON.parse(localStorage.getItem('authToken')))
-    let [owner, setOwner] = useState()
     let [admin, setAdmin] = useState()
+    let [owner, setOwner] = useState()
+    let [staff, setStaff] = useState()
     let [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
@@ -76,29 +78,29 @@ export const AuthProvider = ({children})=> {
 
         
     };
-    let updateToken = async() => {
-        console.log('Update Token Called')
-        let response = await fetch(BaseUrl+'/api/token/refresh/',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({'refresh':authToken?.refresh})
-        })
-        let data = await response.json()
+    // let updateToken = async() => {
+    //     console.log('Update Token Called')
+    //     let response = await fetch(BaseUrl+'/api/token/refresh/',{
+    //         method:'POST',
+    //         headers:{
+    //             'Content-Type':'application/json'
+    //         },
+    //         body: JSON.stringify({'refresh':authToken?.refresh})
+    //     })
+    //     let data = await response.json()
 
-        if (response.status === 200){
-            setAuthToken(data.access)
-            setUser(jwt_decode(data.access))
-            localStorage.setItem('authToken', JSON.stringify(data))
-        }else{
-            logoutUser()
-        }
+    //     if (response.status === 200){
+    //         setAuthToken(data.access)
+    //         setUser(jwt_decode(data.access))
+    //         localStorage.setItem('authToken', JSON.stringify(data))
+    //     }else{
+    //         logoutUser()
+    //     }
 
-        if(loading){
-            setLoading(false)
-        }
-    }
+    //     if(loading){
+    //         setLoading(false)
+    //     }
+    // }
 
     let logoutUser = () => {
         setAuthToken(null)
@@ -131,7 +133,7 @@ export const AuthProvider = ({children})=> {
           setAdminToken(data.access);
           setAdmin(jwt_decode(data.access));
           localStorage.setItem("adminToken", JSON.stringify(data));
-          navigate('/admin/panel');
+          navigate('/admin/home');
         
       };
     }
@@ -220,14 +222,74 @@ export const AuthProvider = ({children})=> {
         navigate('/owner')
     }
 
+    let loginStaff = async(e)=>{
+        e.preventDefault()
+        setLoading(true)
+
+        let response = await fetch(BaseUrl+'/api/token/',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body: JSON.stringify({'email':e.target.email.value, 'password':e.target.password.value})
+
+        })
+        setLoading(false)
+        
+        if(response.status == 200){
+            let data = await response.json()
+            let values = jwt_decode(data.access)
+
+            if (values.is_staff !== true){
+                Swal.fire({
+                    text:'Invalid Credentials!!',
+                    icon:'error'
+                })
+            }else{
+                if(response.status === 200){
+                    setStaffToken(data.access)
+                    localStorage.setItem('staffToken', JSON.stringify(data))
+                    fetchStaffDetails(data.access)
+                    navigate('/staff/home')
+        
+                }else{
+                    console.log('failed')
+                    Swal.fire({
+                        text:'Invalid Credentials!!',
+                        icon:'error'
+                    })
+                }
+            }
+        }else{
+            Swal.fire({
+                text:'Invalid Credentials!!',
+                icon:'error'
+            })
+        }
+    };
+
+    let logoutStaff = () => {
+        setStaffToken(null)
+        setStaff(null)
+        localStorage.removeItem('staffToken')
+        navigate('/staff')
+    }
+
     
-    const fetchUserDetails=async(authToken)=>{ 
+    const fetchUserDetails=async(authToken)=>{
+        setLoading(true)
         const result = await axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${authToken}`} })
         setUser(result.data)
+        setLoading(false)
 
     }
     const fetchOwnerDetails=async(ownerToken)=>{
         const result = await axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${ownerToken}`} })
+        setOwner(result.data)
+
+    }
+    const fetchStaffDetails=async(staffToken)=>{
+        const result = await axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${staffToken}`} })
         setOwner(result.data)
 
     }
@@ -237,6 +299,7 @@ export const AuthProvider = ({children})=> {
         setLoading(true)
         let token = JSON.parse(localStorage.getItem('authToken'));
         let ownertoken = JSON.parse(localStorage.getItem('ownerToken'));
+        let stafftoken = JSON.parse(localStorage.getItem('stafftoken'));
         if(token){
             if(authToken){
                 fetchUserDetails(authToken)
@@ -250,6 +313,14 @@ export const AuthProvider = ({children})=> {
                 fetchOwnerDetails(ownerToken)
             }else{
                 setOwnerToken(ownertoken.access) 
+            }
+
+        }
+        if(stafftoken){
+            if(staffToken){
+                fetchStaffDetails(staffToken)
+            }else{
+                setStaffToken(stafftoken.access) 
             }
 
         }
@@ -274,15 +345,19 @@ export const AuthProvider = ({children})=> {
         user:user,
         admin:admin,
         owner:owner,
+        staff:staff,
         authToken:authToken,
         adminToken:adminToken,
         ownerToken:ownerToken,
+        staffToken:staffToken,
         loginUser:loginUser,
         logoutUser:logoutUser,
         loginAdmin:loginAdmin,
         logoutAdmin:logoutAdmin,
         loginOwner:loginOwner,
         logoutOwner:logoutOwner,
+        loginStaff:loginStaff,
+        logoutStaff:logoutStaff,
     };
  
      return (

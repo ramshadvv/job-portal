@@ -13,20 +13,24 @@ urlpatterns = [
     path('register/', accviews.Register.as_view(), name="register"),
     path('edituser/<int:id>/', accviews.Register.as_view(), name="edit"),
     path('profile/', accviews.getUser.as_view(), name="profile"),
+    path('editprofile/', accviews.getUser.as_view(), name="profile"),
 
     # user
 
     path('education/', userview.EducationView.as_view(), name="education"),
+    path('education/<int:id>/', userview.getEducation, name="geteducation"),
     path('addeducation/', userview.EducationView.as_view(), name="addeducation"),
     path('editeducation/<int:id>/', userview.EducationView.as_view(), name="editeducation"),
     path('deleteeducation/<int:id>/', userview.EducationView.as_view(), name="deleteeducation"),
 
     path('experience/', userview.ExperienceView.as_view(), name="experience"),
+    path('experience/<int:id>/', userview.getExperience, name="getexperience"),
     path('addexperience/', userview.ExperienceView.as_view(), name="addexperience"),
     path('editexperience/<int:id>/', userview.ExperienceView.as_view(), name="editexperience"),
     path('deleteexperience/<int:id>/', userview.ExperienceView.as_view(), name="deleteexperience"),
 
     path('skill/', userview.SkillView.as_view(), name="skill"),
+    path('skill/<int:id>/', userview.getSkills, name="getskill"),
     path('addskill/', userview.SkillView.as_view(), name="addskill"),
     path('editskill/<int:id>/', userview.SkillView.as_view(), name="editskill"),
     path('deleteskill/<int:id>/', userview.SkillView.as_view(), name="deleteskill"),
