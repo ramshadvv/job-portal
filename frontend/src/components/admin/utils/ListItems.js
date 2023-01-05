@@ -5,19 +5,32 @@ import ListItemText from '@mui/material/ListItemText';
 // import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 // import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-// import PeopleIcon from '@mui/icons-material/People';
+import PeopleIcon from '@mui/icons-material/People';
 // import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
+import BusinessIcon from '@mui/icons-material/Business';
 // import AssignmentIcon from '@mui/icons-material/Assignment';
+import { useNavigate } from 'react-router-dom';
 
 import {useContext} from 'react';
 import AuthContext from '../../../context/AuthContext'
 
 export const MainListItems = () =>{
     const {logoutAdmin} = useContext(AuthContext)
+    const navigate = useNavigate()
+    
+    const toDashboard = () =>{
+      navigate('/admin/home')
+    }
+    const toCompanies = () =>{
+      navigate('/admin/companies')
+    }
+    const toEmployee = () =>{
+      navigate('/admin/employees')
+    }
     return(
     <React.Fragment>
-        <ListItemButton>
+        <ListItemButton onClick={toDashboard}>
         <ListItemIcon>
             <DashboardIcon />
         </ListItemIcon>
@@ -25,15 +38,27 @@ export const MainListItems = () =>{
         </ListItemButton>
         {/* <ListItemButton>
         <ListItemIcon>
-            <ShoppingCartIcon />
+            <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Orders" />
+        <ListItemText primary="Owners" />
+        </ListItemButton> */}
+        <ListItemButton onClick={toCompanies}>
+        <ListItemIcon>
+            <BusinessIcon />
+        </ListItemIcon>
+        <ListItemText primary="Companies" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={toEmployee}>
         <ListItemIcon>
             <PeopleIcon />
         </ListItemIcon>
-        <ListItemText primary="Customers" />
+        <ListItemText primary="Employers" />
+        </ListItemButton>
+        {/* <ListItemButton>
+        <ListItemIcon>
+            <ShoppingCartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Orders" />
         </ListItemButton>
         <ListItemButton>
         <ListItemIcon>

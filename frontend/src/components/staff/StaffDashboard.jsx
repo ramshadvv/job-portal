@@ -9,20 +9,29 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
+// import Badge from '@mui/material/Badge';
+// import Container from '@mui/material/Container';
+// import Grid from '@mui/material/Grid';
 // import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
 import { MainListItems, secondaryListItems } from './utils/ListItems';
+import AuthContext from '../../context/AuthContext';
 // import Chart from './utils/Chart';
 // import Deposits from './utils/Deposits';
 // import Orders from './utils/Orders';
 
-function Copyright(props) {
+import {useContext} from 'react'
+import Avatar from '@mui/material/Avatar';
+
+import { useNavigate } from 'react-router-dom'; 
+import Menu from '@mui/material/Menu';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+
+export function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -84,9 +93,24 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent() {
+  const navigate = useNavigate()
   const [open, setOpen] = React.useState(true);
+  const {staff} = useContext(AuthContext);
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const toProfile = () =>{
+    navigate('/owner/profile')
   };
 
   return (
@@ -120,10 +144,41 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
+            <Typography sx={{ marginRight:'1rem' }}>
+              {staff? staff.first_name:''}
+            </Typography>
+              <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  {/* {user ? <Avatar alt={user.username} src={BaseUrl + user.image} /> : <Avatar alt={user.username} src="/static/images/avatar/2.jpg" />} */}
+                  {staff?<Avatar alt={staff.username.toUpperCase()} src="/static/images/avatar/2.jpg" />:<Avatar />}
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                  <MenuItem onClick={handleCloseUserMenu} sx={{display:'flex',flexDirection:'column'}}>
+                    <Typography textAlign="left" onClick={toProfile}>Profile</Typography>
+                  </MenuItem>
+              </Menu>
+            </Box>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
+              {/* <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
-              </Badge>
+              </Badge> */}
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -147,7 +202,7 @@ function DashboardContent() {
             {secondaryListItems}
           </List>
         </Drawer>
-        <Box
+        {/* <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -161,7 +216,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3}> */}
               {/* Chart */}
               {/* <Grid item xs={12} md={8} lg={9}>
                 <Paper
@@ -194,10 +249,10 @@ function DashboardContent() {
                   <Orders />
                 </Paper>
               </Grid> */}
-            </Grid>
+            {/* </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
-        </Box>
+        </Box> */}
       </Box>
     </ThemeProvider>
   );

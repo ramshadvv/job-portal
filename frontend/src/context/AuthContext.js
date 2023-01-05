@@ -13,11 +13,14 @@ export default AuthContext;
 
 export const AuthProvider = ({children})=> {
     const token = JSON.parse(localStorage.getItem('authToken'));
+    const ownertoken = JSON.parse(localStorage.getItem('ownerToken'));
+    const stafftoken = JSON.parse(localStorage.getItem('staffToken'));
+    const admintoken = JSON.parse(localStorage.getItem('adminToken'));
 
     let [authToken,setAuthToken] = useState(token?.access)
-    let [adminToken,setAdminToken] = useState()
-    let [ownerToken,setOwnerToken] = useState()
-    let [staffToken,setStaffToken] = useState()
+    let [adminToken,setAdminToken] = useState(admintoken?.access)
+    let [ownerToken,setOwnerToken] = useState(ownertoken?.access)
+    let [staffToken,setStaffToken] = useState(stafftoken?.access)
     let [user, setUser] = useState(JSON.parse(localStorage.getItem('authToken')))
     let [admin, setAdmin] = useState()
     let [owner, setOwner] = useState()
@@ -290,7 +293,12 @@ export const AuthProvider = ({children})=> {
     }
     const fetchStaffDetails=async(staffToken)=>{
         const result = await axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${staffToken}`} })
-        setOwner(result.data)
+        setStaff(result.data)
+
+    }
+    const fetchAdminDetails=async(adminToken)=>{
+        const result = await axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${adminToken}`} })
+        setAdmin(result.data)
 
     }
     
@@ -299,12 +307,21 @@ export const AuthProvider = ({children})=> {
         setLoading(true)
         let token = JSON.parse(localStorage.getItem('authToken'));
         let ownertoken = JSON.parse(localStorage.getItem('ownerToken'));
-        let stafftoken = JSON.parse(localStorage.getItem('stafftoken'));
+        let stafftoken = JSON.parse(localStorage.getItem('staffToken'));
+        let admintoken = JSON.parse(localStorage.getItem('adminToken'));
         if(token){
             if(authToken){
                 fetchUserDetails(authToken)
             }else{
                 setAuthToken(token.access) 
+            }
+
+        }
+        if(admintoken){
+            if(adminToken){
+                fetchAdminDetails(adminToken)
+            }else{
+                setAdminToken(admintoken.access) 
             }
 
         }
@@ -320,7 +337,7 @@ export const AuthProvider = ({children})=> {
             if(staffToken){
                 fetchStaffDetails(staffToken)
             }else{
-                setStaffToken(stafftoken.access) 
+                setStaffToken(stafftoken.access)
             }
 
         }

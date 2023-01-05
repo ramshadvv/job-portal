@@ -5,6 +5,7 @@ from rest_framework import status, permissions
 # from rest_framework.decorators import api_view
 from api.serializers import AccountsSerializer
 from .models import Accounts
+from owner.models import Company
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
@@ -19,15 +20,17 @@ class Register(APIView):
 
     def post(self, request):
         req_data = request.data
+        if 'company_id' in req_data:
+            if Company.objects.filter(id = req_data['company_id']).exists() == False:
+                return Response({'error':'Company is not Registered!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         if Accounts.objects.filter(username = req_data['username']).exists():
             return Response({'error':'Username already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        elif Accounts.objects.filter(email = req_data['email']).exists():
+        if Accounts.objects.filter(email = req_data['email']).exists():
             return Response({'error':'Email already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        elif Accounts.objects.filter(phone = req_data['phone']).exists():
+        if Accounts.objects.filter(phone = req_data['phone']).exists():
             return Response({'error':'Phone number is already Exist!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        elif len(req_data['phone']) != 10:
+        if len(req_data['phone']) != 10:
             return Response({'error':'Phone number is not Valid!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        print('-----------------------')
 
         user = AccountsSerializer(data=request.data)
 
@@ -44,7 +47,6 @@ class Register(APIView):
     def put(self, request, id):
         item = Accounts.objects.get(id=id)
         data = request.data
-        print(data['last_name'])
         item.first_name = data['first_name']
         item.last_name = data['last_name']
         if Accounts.objects.filter(username = data['username']).exists() and item.username != data['username']:

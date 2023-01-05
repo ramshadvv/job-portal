@@ -52,10 +52,10 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Orders() {
+export default function Orders(props) {
   return (
     <React.Fragment>
-      <Title>Recent Orders</Title>
+      <Title>{props.title}</Title>
       <Table size="small">
         <TableHead>
           <TableRow>

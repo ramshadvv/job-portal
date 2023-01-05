@@ -18,15 +18,22 @@ import EditBio from './components/user/EditBio'
 import Test from './components/user/Test'
 
 import AdminLoginPage  from './components/admin/AdminLoginPage'
-import AdminDashboard  from './components/admin/AdminDashboard'
+import AdminHomePage  from './components/admin/AdminHomePage'
+import CompanyList  from './components/admin/CompanyList'
+import EmployeeList from './components/admin/EmployeeList';
 
 import OwnerLoginPage  from './components/owner/OwnerLoginPage'
-import OwnerDashboard  from './components/owner/OwnerDashboard'
+import OwnerHomePage  from './components/owner/OwnerHomePage'
 import OwnerSignUp  from './components/owner/OwnerSignUp'
+import StaffList  from './components/owner/StaffList'
+import CompanySignup from './components/owner/CompanySignup';
+import OwnerProfile from './components/owner/OwnerProfile';
 
 import StaffLoginPage  from './components/staff/StaffLoginPage'
-import StaffDashboard  from './components/staff/StaffDashboard'
+import StaffHomePage  from './components/staff/StaffHomePage'
 import StaffSignUp  from './components/staff/StaffSignUp'
+import UsersList from './components/staff/UsersList';
+import CompanyVerify from './components/staff/CompanyVerify';
 
 function App() {
   return (
@@ -36,7 +43,9 @@ function App() {
             {/* admin routers */}
             
             <Route element={<AdminLoginPage />} path='/admin' />
-            <Route element={<AdminDashboard />} path='/admin/home' />
+            <Route element={<AdminHomePage />} path='/admin/home' />
+            <Route element={<CompanyList />} path='/admin/companies' />
+            <Route element={<EmployeeList />} path='/admin/employees' />
 
             {/* user routers */}
 
@@ -58,14 +67,19 @@ function App() {
             {/* owner routers */}
 
             <Route element={<OwnerLoginPage />} path='/owner' />
-            <Route element={<OwnerDashboard />} path='/owner/home' />
+            <Route element={<OwnerHomePage />} path='/owner/home' />
             <Route element={<OwnerSignUp />} path='/owner/signup' />
+            <Route element={<CompanySignup />} path='/owner/addcompany' />
+            <Route element={<StaffList />} path='/owner/staffs' />
+            <Route element={<OwnerProfile />} path='/owner/profile' />
 
             {/* staff routers */}
 
             <Route element={<StaffLoginPage />} path='/staff' />
-            <Route element={<StaffDashboard />} path='/staff/home' />
-            <Route element={<StaffSignUp />} path='/staff/signup' />
+            <Route element={<StaffHomePage />} path='/staff/home' />
+            <Route element={<StaffSignUp />} path='/staff/signup/:id' />
+            <Route element={<CompanyVerify />} path='/staff/verify' />
+            <Route element={<UsersList />} path='/staff/userlist' />
 
           </Routes>
       </AuthProvider>

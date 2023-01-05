@@ -30,18 +30,19 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function OwnerLoginPage() {
+export default function StaffLoginPage() {
     
-    let {loginOwner} = useContext(AuthContext)
+    let {loginStaff} = useContext(AuthContext)
     
     // if(user){
     //     return <Navigate to='/home' />
     // }
-    
+
     const toLink = [
-        {link:'/signup', label:"Don't have an account? Sign Up"}, 
+        {link:'/staff/verify', label:"Don't have an account? Sign Up"}, 
         {link:'/', label:"Login as User?"}
     ]
+
     return (
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
@@ -60,7 +61,7 @@ export default function OwnerLoginPage() {
             <Typography component="h1" variant="h5">
                 Sign in
             </Typography>
-            <Box component="form" onSubmit={loginOwner} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={loginStaff} noValidate sx={{ mt: 1 }}>
                 <TextField
                 margin="normal"
                 required

@@ -2,8 +2,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -13,7 +11,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-// import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -30,19 +28,18 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function StaffLoginPage() {
+export default function OwnerLoginPage() {
     
-    let {loginStaff} = useContext(AuthContext)
+    let {loginOwner, owner} = useContext(AuthContext)
     
-    // if(user){
-    //     return <Navigate to='/home' />
-    // }
-
+    if(owner){
+        return <Navigate to='/owner/home' />
+    }
+    
     const toLink = [
-        {link:'/signup', label:"Don't have an account? Sign Up"}, 
+        {link:'/owner/signup', label:"Don't have an account? Sign Up"}, 
         {link:'/', label:"Login as User?"}
     ]
-
     return (
         <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
@@ -61,7 +58,7 @@ export default function StaffLoginPage() {
             <Typography component="h1" variant="h5">
                 Sign in
             </Typography>
-            <Box component="form" onSubmit={loginStaff} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={loginOwner} noValidate sx={{ mt: 1 }}>
                 <TextField
                 margin="normal"
                 required

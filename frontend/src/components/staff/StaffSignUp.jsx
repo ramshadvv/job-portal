@@ -17,7 +17,7 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form'
 import axios from 'axios';
 import BaseUrl from '../../context/BaseUrl';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import Swal from 'sweetalert2'
 
 function Copyright(props) {
@@ -38,6 +38,7 @@ const theme = createTheme();
 export default function StaffSignUp() {
     const { register, handleSubmit, formState: {errors}, } = useForm()
     const navigate = useNavigate();
+    const values = useParams()
 
     const [userData, setUserData] = useState({
         first_name:"",
@@ -51,7 +52,7 @@ export default function StaffSignUp() {
         status:"staff",
   });
 
-  const createMyModelEntry = async (data) => {
+  const createMyModelEntry = async (data, id) => {
     let form_data = new FormData();
     if (data.image)
       form_data.append("image", data.image, data.image.name);
@@ -59,6 +60,7 @@ export default function StaffSignUp() {
     form_data.append("last_name", data.last_name);
     form_data.append("email", data.email);
     form_data.append("phone", data.phone);
+    form_data.append("company_id", id);
     form_data.append("username", data.username);
     form_data.append("password", data.password);
     form_data.append("password2", data.password2);
@@ -86,7 +88,7 @@ export default function StaffSignUp() {
         if(userData.password !== userData.password2){
             Swal.fire("Error", "Password must be same!!");
         }else{
-          let form_data = await createMyModelEntry(userData)
+          let form_data = await createMyModelEntry(userData, values.id)
           console.log(form_data)
             try {
                 await axios.post(BaseUrl + '/register/', form_data,{
@@ -97,16 +99,16 @@ export default function StaffSignUp() {
                     navigate('/staff')
                 });
             } catch (error) {
-                console.log(error);
-               
+              let data = error.response.data
+              console.log(data.error);
+              if(data.error === 'Company is not Registered!!'){
+                Swal.fire("Error", "Company is not registered");
+              }else{
                 Swal.fire("Error", "Something went wrong");
+              }
             }
-
         }
     };
-
-    
-
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">

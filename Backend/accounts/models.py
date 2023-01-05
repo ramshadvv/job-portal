@@ -41,6 +41,7 @@ class AccountManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_user', True)
         extra_fields.setdefault('is_owner', False)
+        extra_fields.setdefault('is_approved', True)
         return self._create_user(first_name, last_name, username, email, phone, password, **extra_fields)
 
 
@@ -52,6 +53,7 @@ class AccountManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_user', True)
         extra_fields.setdefault('is_owner', True)
+        extra_fields.setdefault('is_approved', True)
         return self._create_user(first_name, last_name, username, email, phone, password, **extra_fields)
 
 
@@ -64,6 +66,7 @@ class Accounts(AbstractUser,PermissionsMixin):
     username   = models.CharField(max_length=50, unique=True)
     email      = models.EmailField(unique=True,max_length=255)
     phone      = models.CharField(max_length=50,unique=True)
+    company_id = models.CharField(max_length=50, blank=True, null=True)
     image      = models.ImageField(upload_to='images', blank=True, null=True)
 
     #required
@@ -76,6 +79,7 @@ class Accounts(AbstractUser,PermissionsMixin):
     is_user         =   models.BooleanField(default=True)
     is_owner        =   models.BooleanField(default=False)
     is_superuser    =   models.BooleanField(default=False)
+    is_approved     =   models.BooleanField(default=False)
     
 
     def __str__(self):

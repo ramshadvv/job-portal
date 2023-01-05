@@ -1,4 +1,7 @@
-import * as React from 'react';
+import {useState, useEffect, useContext} from 'react';
+import React from 'react';
+import BaseUrl from '../../context/BaseUrl';
+import axios from 'axios';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -9,20 +12,25 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-// import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+// import Badge from '@mui/material/Badge';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
 import { MainListItems, secondaryListItems } from './utils/ListItems';
-// import Chart from './utils/Chart';
-// import Deposits from './utils/Deposits';
-// import Orders from './utils/Orders';
 
-function Copyright(props) {
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import AuthContext from '../../context/AuthContext';
+import Spinner from '../../utils/Spinner';
+import Swal from 'sweetalert2'
+
+import Menu from '@mui/material/Menu';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+
+export function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -84,12 +92,62 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const mdTheme = createTheme();
 
 function DashboardContent() {
+  const {ownerToken} = useContext(AuthContext);
   const [open, setOpen] = React.useState(true);
+  const [cmp, setCmp] = useState();
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const toProfile = () =>{
+    navigate('/owner/profile')
+  };
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const toAddCompany = () =>{
+    navigate('/owner/addcompany')
+  }
+
+  const fetchCmpDetails=async(ownerToken)=>{
+    try{
+      setLoading(true)
+      const result = await axios.get(`${BaseUrl}/companydetails/`, {
+        headers: {"Authorization" : `Bearer ${ownerToken}`} 
+      })
+      setCmp(result.data)
+      setLoading(false)
+
+    }catch(err){
+      console.log(err)
+      Swal.fire({
+        text:'Please register your Company!!',
+        icon:'error'
+    })
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCmpDetails(ownerToken)
+  }, []);
+
+  if(loading){
+    return <Spinner />
+  }
+
   return (
+    <>
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
@@ -120,10 +178,57 @@ function DashboardContent() {
             >
               Dashboard
             </Typography>
+            {cmp?
+            <Button
+              component="h1"
+              color="inherit"
+              noWrap
+              sx={{ marginRight:'1rem' }}
+            > {cmp.id}
+              
+            </Button  >:
+            <Button
+              onClick={toAddCompany}
+              component="h1"
+              color="inherit"
+              noWrap
+              sx={{ marginRight:'1rem' }}
+            > Register
+              
+            </Button  >}
+
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  {/* {user ? <Avatar alt={user.username} src={BaseUrl + user.image} /> : <Avatar alt={user.username} src="/static/images/avatar/2.jpg" />} */}
+                  <Avatar />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                  <MenuItem onClick={handleCloseUserMenu} sx={{display:'flex',flexDirection:'column'}}>
+                    <Typography textAlign="left" onClick={toProfile}>Profile</Typography>
+                  </MenuItem>
+              </Menu>
+            </Box>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
+              {/* <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
-              </Badge>
+              </Badge> */}
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -147,7 +252,7 @@ function DashboardContent() {
             {secondaryListItems}
           </List>
         </Drawer>
-        <Box
+        {/* <Box
           component="main"
           sx={{
             backgroundColor: (theme) =>
@@ -161,7 +266,7 @@ function DashboardContent() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3}> */}
               {/* Chart */}
               {/* <Grid item xs={12} md={8} lg={9}>
                 <Paper
@@ -194,12 +299,13 @@ function DashboardContent() {
                   <Orders />
                 </Paper>
               </Grid> */}
-            </Grid>
+            {/* </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
-        </Box>
+        </Box> */}
       </Box>
     </ThemeProvider>
+    </>
   );
 }
 

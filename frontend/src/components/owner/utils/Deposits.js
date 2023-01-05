@@ -7,21 +7,21 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Deposits() {
+export default function Deposits(props) {
   return (
     <React.Fragment>
-      <Title>Recent Deposits</Title>
+      <Title>{props.title}</Title>
       <Typography component="p" variant="h4">
-        $3,024.00
+        {props.values}
       </Typography>
-      <Typography color="text.secondary" sx={{ flex: 1 }}>
-        on 15 March, 2019
+      {/* <Typography color="text.secondary" sx={{ flex: 1 }}>
+        {props.dateupdate}
       </Typography>
       <div>
         <Link color="primary" href="#" onClick={preventDefault}>
           View balance
         </Link>
-      </div>
+      </div> */}
     </React.Fragment>
   );
 }

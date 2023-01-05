@@ -18,16 +18,24 @@ import AuthContext from '../../context/AuthContext';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Spinner from "../../utils/Spinner";
-import {  } from 'react-router-dom';
 
 function Profile() {
     const [educ, setEduc] = useState([])
     const [exp, setExp] = useState([])
     const [skill, setSkill] = useState([])
     const [res, setRes] = useState([])
+    const [user, setUser] = useState([])
     const [loading, setLoading] = useState(false)
-    const {authToken, user} = useContext(AuthContext)
+    const {authToken} = useContext(AuthContext)
     const navigate = useNavigate()
+
+    const fetchUserDetails=async(authToken)=>{
+        setLoading(true)
+        const result = await Axios.get(`${BaseUrl}/profile/`, { headers: {"Authorization" : `Bearer ${authToken}`} })
+        setUser(result.data)
+        setLoading(false)
+
+    }
 
     const fetchEducation = async(authToken) =>{
         setLoading(true)
@@ -155,6 +163,7 @@ function Profile() {
     }
 
     useEffect(()=> {
+        fetchUserDetails(authToken)
         fetchEducation(authToken)
         fetchExperience(authToken)
         fetchSkill(authToken)
@@ -197,7 +206,7 @@ function Profile() {
             <NavBar />
             <Grid container spacing={2}>
                 <Grid item xs={3}>
-                    <Card sx={{ maxWidth: 300, marginLeft:'3rem', marginTop:'6rem' }}>
+                    <Card sx={{ width: 300, marginLeft:'3rem', marginTop:'6rem' }}>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
                             Quick Links
