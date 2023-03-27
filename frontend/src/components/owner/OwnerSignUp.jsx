@@ -45,7 +45,6 @@ export default function OwnerSignUp() {
         email: "",
         phone: "",
         username: "",
-        image: "",
         password: "",
         password2: "",
         status:"owner",
@@ -53,8 +52,6 @@ export default function OwnerSignUp() {
 
   const createMyModelEntry = async (data) => {
     let form_data = new FormData();
-    if (data.image)
-      form_data.append("image", data.image, data.image.name);
     form_data.append("first_name", data.first_name);
     form_data.append("last_name", data.last_name);
     form_data.append("email", data.email);
@@ -74,19 +71,13 @@ export default function OwnerSignUp() {
     });
     console.log(userData)
   };
-
-  const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.files[0],
-    });
-  };
     
     const onSubmit = async ()=> {
         if(userData.password !== userData.password2){
             Swal.fire("Error", "Password must be same!!");
         }else{
           let form_data = await createMyModelEntry(userData)
+          
           console.log(form_data)
             try {
                 await axios.post(BaseUrl + '/register/', form_data,{
@@ -231,24 +222,6 @@ export default function OwnerSignUp() {
                     autoComplete="phone"
                     error={!!errors.phone}
                     helperText={errors.phone ? errors.phone.message : ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                    {...register("image", {
-                        required: "Image is required",
-                    })}
-                    onChange={handleImageChange}
-                    required
-                    fullWidth
-                    focused
-                    id="image"
-                    label="Profile Picture"
-                    name="image"
-                    type="file"
-                    autoComplete="image"
-                    error={!!errors.image}
-                    helperText={errors.image ? errors.image.message : ''}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

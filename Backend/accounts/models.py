@@ -81,11 +81,9 @@ class Accounts(AbstractUser,PermissionsMixin):
     is_superuser    =   models.BooleanField(default=False)
     is_approved     =   models.BooleanField(default=False)
     
-
     def __str__(self):
         return self.username
     
-
     object = AccountManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name','username','phone']
@@ -94,4 +92,3 @@ class Accounts(AbstractUser,PermissionsMixin):
     class meta:
         verbose_name = 'Account'
         verbose_name_plural = 'Accounts'
-

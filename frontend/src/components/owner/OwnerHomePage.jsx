@@ -14,26 +14,71 @@ import Chart from './utils/Chart';
 import Deposits from './utils/Deposits';
 import Orders from './utils/Orders';
 
-import {useState} from 'react';
-// import axios from 'axios';
-// import BaseUrl from '../../context/BaseUrl';
-// import {useNavigate} from 'react-router-dom';
-// import Swal from 'sweetalert2'
-// import AuthContext from '../../context/AuthContext';
+import {useState, useContext, useEffect} from 'react';
+import axios from 'axios';
+import BaseUrl from '../../context/BaseUrl';
+import {useNavigate} from 'react-router-dom';
+import Swal from 'sweetalert2'
+import AuthContext from '../../context/AuthContext';
 import Spinner from '../../utils/Spinner';
 
-
-
 function HomePage() {
-    // const navigate = useNavigate();
-    // const {ownerToken} = useContext(AuthContext)
-    const [loading] = useState(false)
+    const navigate = useNavigate();
+    const {ownerToken, owner, logoutOwner} = useContext(AuthContext)
+    const [loading, setLoading] = useState(false)
+    const [plan, setPlan] = useState([])
+    const [cmp, setCmp] = useState([])
+    
+  
+  const fetchCmpDetails=async(ownerToken)=>{
+    try{
+      setLoading(true)
+      const result = await axios.get(`${BaseUrl}/companydetails/`, {
+        headers: {"Authorization" : `Bearer ${ownerToken}`} 
+      })
+      setCmp(result.data)
+      setLoading(false)
+    }catch(err){
+      setLoading(false)
+      if(err.response.data.errors === 'company is not exists'){
+        navigate('/owner/addcompany')
+      }
+    }
+  }
 
+  const fetchPlanDetails=async(ownerToken)=>{
+    try{
+      setLoading(true)
+      const result = await axios.get(`${BaseUrl}/purchaseplan/`, {
+        headers: {"Authorization" : `Bearer ${ownerToken}`} 
+      })
+      setPlan(result.data)
+      setLoading(false)
 
+    }catch(err){
+      setLoading(false)
+      if(err.response.data.errors === 'plan is not exists'){
+        navigate('/owner/subscribeplan')
+      }
+    }
+  }
+
+  if(owner && plan.length !== 0 && cmp.length !== 0){
+      if(owner.is_approved == false){
+      logoutOwner()
+      Swal.fire("Sorry", "You just wait for Approval!!");
+    }
+    }
+
+  useEffect(() => {
+    fetchCmpDetails(ownerToken);
+    fetchPlanDetails(ownerToken);
+  }, []);
+    
   if(loading){
     return <Spinner />
   }
-
+  
    return (
      <div>
         <Box sx={{display:'flex'}}>

@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import AccountsSerializer
+# from .serializers import AccountsSerializer
+# from rest_framework.generics import GenericAPIView
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

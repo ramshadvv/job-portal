@@ -18,6 +18,9 @@ import AuthContext from '../../context/AuthContext';
 import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Spinner from "../../utils/Spinner";
+import Avatar from '@mui/material/Avatar';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 function Profile() {
     const [educ, setEduc] = useState([])
@@ -196,6 +199,9 @@ function Profile() {
     const toEditProfile = () =>{
         navigate('/editprofile')
     }
+    const toAddPic = () =>{
+        navigate('/addpic')
+    }
 
     if(loading){
         return <Spinner />
@@ -264,15 +270,15 @@ function Profile() {
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
                                             
-                                            LINKED IN <span style={{marginLeft:'17px'}}> : </span><a href={res.linkedin}>{res.linkedin}</a>
+                                            LINKED IN <span style={{marginLeft:'17px'}}> : </span><a href={res.linkedin} target={'blank'}>{res.linkedin}</a>
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
                                             
-                                            GITHUB <span style={{marginLeft:'35px'}}> : </span><a href={res.github}>{res.github}</a>
+                                            GITHUB <span style={{marginLeft:'35px'}}> : </span><a href={res.github} target={'blank'}>{res.github}</a>
                                         </Typography>
                                         <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'1rem'}}>
                                             {/* {res.resume} */}
-                                        <a href={BaseUrl + res.resume}>
+                                        <a href={BaseUrl + res.resume} target={'blank'}>
                                             <Button size="large" sx={{marginLeft:'25rem'}}>OPEN</Button>
                                         </a>
                                         </Typography>
@@ -393,19 +399,35 @@ function Profile() {
                             <Button size="small" sx={{marginLeft:'36rem'}} onClick={toEditProfile}>EDIT</Button>
                             </Typography>
                             <hr />
-                            <List>
-                                <ListItem>
-                                <ListItemText
-                                    primary={user.first_name + ' ' + user.last_name}
-                                />
-                                </ListItem>
-                                <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
-                                    {user.email}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
-                                            {user.phone}
-                                </Typography>
-                            </List>
+                            <Grid container spacing={2}  sx={{marginLeft:'1rem', marginTop:'1px'}}>
+                                <Grid item xs={6}>
+                                    <List>
+                                        <ListItem>
+                                            <ListItemText
+                                                primary={user.first_name + ' ' + user.last_name}
+                                            />
+                                        </ListItem>
+                                        <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem', marginTop:'3px'}}>
+                                            {user.email}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{marginLeft:'1rem', fontSize:'1rem'}}>
+                                                    {user.phone}
+                                        </Typography>
+                                    </List>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <div>
+                                        <div style={{float:'left'}}>
+                                            {user ? <Avatar alt={user.username} sx={{ width: 100, height: 100, marginLeft:'5rem' }} src={BaseUrl + user.image} /> : <Avatar alt={user.username} src="/static/images/avatar/2.jpg" />}
+                                        </div>
+                                        <div style={{float:'left'}}>
+                                            <EditIcon sx={{marginLeft:'1rem', color:'#1976d2', cursor:'pointer'}} onClick={toAddPic}></EditIcon>
+                                        </div>
+                                    </div>
+
+                                </Grid>
+                        
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>

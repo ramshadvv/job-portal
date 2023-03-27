@@ -9,7 +9,7 @@ class AccountsSerializer(serializers.ModelSerializer):
     status = serializers.CharField(style={'input':'text'},write_only = True)
     class Meta:
         model = Accounts
-        fields = ['id','first_name','last_name','email','username','phone','password','password2','is_active','status','image','company_id']
+        fields = ['id','first_name','last_name','email','username','phone','password','password2','is_active','status','image','company_id', 'is_approved']
 
         extra_kwargs = {'password':{'write_only':True}}
 
@@ -20,10 +20,13 @@ class AccountsSerializer(serializers.ModelSerializer):
             phone       = self.validated_data['phone'],
             first_name  = self.validated_data['first_name'],
             last_name   = self.validated_data['last_name'],
-            image       = self.validated_data['image'],
         )
         
         statususer = self.validated_data['status']
+
+        if 'image' in self.validated_data:
+            register.image = self.validated_data['image']
+            
         if statususer == 'staff':
             if Company.objects.filter(id=self.validated_data['company_id']):
                 register.company_id = self.validated_data['company_id']
@@ -36,7 +39,6 @@ class AccountsSerializer(serializers.ModelSerializer):
         elif statususer == 'owner':
             register.is_owner    = True
             register.is_user     = False
-            register.is_active   = False
             register.is_approved = False
         password = self.validated_data['password']
         password2 = self.validated_data['password2']

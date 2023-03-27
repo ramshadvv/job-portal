@@ -10,6 +10,24 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 # Create your views here.
 
+from django.db.models import Q
+
+from django.contrib.auth import get_user_model
+
+MyUser = get_user_model()
+
+class UsernameOrEmailBackend(object):
+    def authenticate(self, email=None, password=None, **kwargs):
+        try:
+           # Try to fetch the user by searching the username or email field
+            user = MyUser.objects.get(Q(username=email)|Q(email=email))
+            if user.check_password(password):
+                return user
+        except MyUser.DoesNotExist:
+            # Run the default password hasher once to reduce the timing
+            # difference between an existing and a non-existing user (#20760).
+            MyUser().set_password(password)
+
 class Register(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -89,10 +107,22 @@ class getUser(APIView):
         if len(data['phone']) != 10:
             return Response({'error':'Phone number is not Valid!!'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         item.phone = data['phone']
-        if 'image' in data:
-            item.image = data['image']
         item.save()
         serializer = AccountsSerializer(instance=item)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+class AddPic(APIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request):
+        user = Accounts.objects.get(username = request.user)
+        data = request.data
+        if 'image' in data:
+            user.image = data['image']
+        user.save()
+        serializer = AccountsSerializer(instance=user)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
 
 

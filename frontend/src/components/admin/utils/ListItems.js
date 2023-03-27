@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 
 import {useContext} from 'react';
 import AuthContext from '../../../context/AuthContext'
+import PendingIcon from '@mui/icons-material/Pending';
 
 export const MainListItems = () =>{
     const {logoutAdmin} = useContext(AuthContext)
@@ -22,11 +23,17 @@ export const MainListItems = () =>{
     const toDashboard = () =>{
       navigate('/admin/home')
     }
+    const toPendingList = () =>{
+      navigate('/admin/pending')
+    }
     const toCompanies = () =>{
       navigate('/admin/companies')
     }
     const toEmployee = () =>{
       navigate('/admin/employees')
+    }
+    const toPendingJobs = () =>{
+      navigate('/admin/pendingjobs')
     }
     return(
     <React.Fragment>
@@ -42,6 +49,18 @@ export const MainListItems = () =>{
         </ListItemIcon>
         <ListItemText primary="Owners" />
         </ListItemButton> */}
+        <ListItemButton onClick={toPendingList}>
+        <ListItemIcon>
+            <PendingIcon />
+        </ListItemIcon>
+        <ListItemText primary="Pending Registration" />
+        </ListItemButton>
+        <ListItemButton onClick={toPendingJobs}>
+        <ListItemIcon>
+            <PendingIcon />
+        </ListItemIcon>
+        <ListItemText primary="Pending Jobs" />
+        </ListItemButton>
         <ListItemButton onClick={toCompanies}>
         <ListItemIcon>
             <BusinessIcon />

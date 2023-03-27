@@ -1,5 +1,5 @@
 import React from 'react';
-import OwnerDashboard from './OwnerDashboard';
+import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
@@ -29,7 +29,7 @@ const theme = createTheme();
  function CompanySignup() {
     const { register, handleSubmit, formState: {errors}, } = useForm()
     const navigate = useNavigate();
-    const {ownerToken} = useContext(AuthContext)
+    const {ownerToken, logoutOwner} = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
 
 
@@ -73,7 +73,6 @@ const theme = createTheme();
    return (
      <div>
         <Box sx={{display:'flex'}}>
-            <OwnerDashboard />
         <Box
           component="main"
           sx={{
@@ -110,13 +109,7 @@ const theme = createTheme();
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
-                                {...register("cmp_name", {
-                                    pattern: {
-                                    value: /^[A-Za-z0-9\s]{0,}$/,
-                                    message:
-                                        "cmp_name be Characters",
-                                    },
-                                })}
+                                {...register("cmp_name")}
                                 autoComplete="given-name"
                                 name="cmp_name"
                                 required
@@ -130,13 +123,7 @@ const theme = createTheme();
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                {...register("cmp_place", {
-                                    pattern: {
-                                    value: /^[A-Za-z0-9\s]{1,}$/,
-                                    message:
-                                        "Place must be characters",
-                                    },
-                                })}
+                                {...register("cmp_place")}
                                 required
                                 fullWidth
                                 id="cmp_place"
@@ -170,13 +157,7 @@ const theme = createTheme();
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
-                                {...register("cmp_address", {
-                                    pattern: {
-                                    value: /^[A-Za-z0-9,.\s]{1,}$/,
-                                    message:
-                                        "Address must be characters",
-                                    },
-                                })}
+                                {...register("cmp_address")}
                                 required
                                 fullWidth
                                 id="cmp_address"
@@ -197,6 +178,9 @@ const theme = createTheme();
                     SUBMIT
                     </Button>
                 </Box>
+                    <Link onClick={logoutOwner} sx={{cursor:'pointer'}} variant="body2">
+                    Login?
+                    </Link>
                 </Box>
                 <Copyright sx={{ mt: 5 }} />
             </Container>

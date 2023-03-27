@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import Accounts
+from staff.models import JobPost
 
 # Create your models here.
 
@@ -44,3 +45,19 @@ class Bio(models.Model):
 
     def __str__(self):
         return str(self.username)
+
+status_choice = (
+    ('pending','pending'),
+    ('selected','selected'),
+    ('rejected','rejected'),
+)
+
+class ApplyJob(models.Model):
+    app_job       = models.ForeignKey(JobPost, on_delete=models.CASCADE, blank=True, null=True)
+    app_user      = models.ForeignKey(Accounts, on_delete=models.CASCADE, blank=True, null=True)
+    cover_letter  = models.TextField(blank=True, null=True)
+    app_status    = models.CharField(max_length=50, choices=status_choice, default= 'pending')
+    is_deleted    = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.app_job.job_title + ' (' + self.app_user.username +')'

@@ -18,7 +18,7 @@ import AuthContext from '../../context/AuthContext';
 import BaseUrl from '../../context/BaseUrl';
 import { useNavigate } from 'react-router-dom';
 
-const pages = ['Home', 'Jobs'];
+const pages = ['Home'];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -47,7 +47,7 @@ function NavBar() {
   };
 
   const toHome = () =>{
-    navigate('/home')
+    navigate('/')
   }
 
   return (
@@ -135,11 +135,6 @@ function NavBar() {
                 sx={{ my: 2, color: 'white', display: 'block', marginLeft:8 }}
               >
                 HOME
-              </Button>
-              <Button 
-                sx={{ my: 2, color: 'white', display: 'block', marginLeft:8 }}
-              >
-                JOBS
               </Button>
             
           </Box>

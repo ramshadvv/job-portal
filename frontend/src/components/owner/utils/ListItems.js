@@ -11,6 +11,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 // import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from 'react-router-dom';
 import PendingIcon from '@mui/icons-material/Pending';
+import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 
 import {useContext} from 'react';
 import AuthContext from '../../../context/AuthContext'
@@ -27,6 +28,9 @@ export const MainListItems = () =>{
     }
     const toPendingList = () =>{
       navigate('/owner/pending')
+    }
+    const toJobsList = () =>{
+      navigate('/owner/viewjobs')
     }
     return(
     <React.Fragment>
@@ -47,6 +51,12 @@ export const MainListItems = () =>{
             <PeopleIcon />
         </ListItemIcon>
         <ListItemText primary="Staffs" />
+        </ListItemButton>
+        <ListItemButton  onClick={toJobsList}>
+        <ListItemIcon>
+            <FolderCopyIcon />
+        </ListItemIcon>
+        <ListItemText primary="Jobs" />
         </ListItemButton>
         {/* <ListItemButton>
         <ListItemIcon>

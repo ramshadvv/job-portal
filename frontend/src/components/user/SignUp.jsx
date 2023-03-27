@@ -45,7 +45,7 @@ export default function SignUp() {
         email: "",
         phone: "",
         username: "",
-        image: "",
+        // image: "",
         password: "",
         password2: "",
         status:"other",
@@ -53,8 +53,8 @@ export default function SignUp() {
 
   const createMyModelEntry = async (data) => {
     let form_data = new FormData();
-    if (data.image)
-      form_data.append("image", data.image, data.image.name);
+    // if (data.image)
+      // form_data.append("image", data.image, data.image.name);
     form_data.append("first_name", data.first_name);
     form_data.append("last_name", data.last_name);
     form_data.append("email", data.email);
@@ -75,15 +75,15 @@ export default function SignUp() {
     console.log(userData)
   };
 
-  const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.files[0],
-    });
-    // let newData = { ...userData };
-    // newData["image"] = e.target.files[0];
-    // setUserData(newData);
-  };
+  // const handleImageChange = (e) => {
+  //   setUserData({
+  //     ...userData,
+  //     [e.target.name]: e.target.files[0],
+  //   });
+  //   // let newData = { ...userData };
+  //   // newData["image"] = e.target.files[0];
+  //   // setUserData(newData);
+  // };
     
     const onSubmit = async ()=> {
         if(userData.password !== userData.password2){
@@ -248,7 +248,7 @@ export default function SignUp() {
                     helperText={errors.phone ? errors.phone.message : ''}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                     {...register("image", {
                         required: "Image is required",
@@ -265,7 +265,7 @@ export default function SignUp() {
                     error={!!errors.image}
                     helperText={errors.image ? errors.image.message : ''}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12} sm={6}>
                 <TextField
                     {...register("password", {

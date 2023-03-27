@@ -46,8 +46,8 @@ export default function EditProfile() {
 
   const createMyModelEntry = async (data) => {
     let form_data = new FormData();
-    if (data.image && data.image != pro.image)
-      form_data.append("image", data.image[0], data.image.name);
+    // if (data.image && data.image != pro.image)
+    //   form_data.append("image", data.image[0], data.image.name);
     form_data.append("first_name", data.first_name);
     form_data.append("last_name", data.last_name);
     form_data.append("email", data.email);
@@ -229,7 +229,7 @@ export default function EditProfile() {
                     helperText={errors.phone ? errors.phone.message : ''}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                     {...register("image")}
                     required
@@ -243,7 +243,7 @@ export default function EditProfile() {
                     error={!!errors.image}
                     helperText={errors.image ? errors.image.message : ''}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
             <Button
               type="submit"

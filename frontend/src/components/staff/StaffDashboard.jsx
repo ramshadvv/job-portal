@@ -110,8 +110,9 @@ function DashboardContent() {
   };
 
   const toProfile = () =>{
-    navigate('/owner/profile')
+    navigate('/staff/profile')
   };
+  console.log(staff);
 
   return (
     <ThemeProvider theme={mdTheme}>

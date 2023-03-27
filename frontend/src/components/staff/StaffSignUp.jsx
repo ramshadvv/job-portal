@@ -46,7 +46,6 @@ export default function StaffSignUp() {
         email: "",
         phone: "",
         username: "",
-        image: "",
         password: "",
         password2: "",
         status:"staff",
@@ -54,8 +53,6 @@ export default function StaffSignUp() {
 
   const createMyModelEntry = async (data, id) => {
     let form_data = new FormData();
-    if (data.image)
-      form_data.append("image", data.image, data.image.name);
     form_data.append("first_name", data.first_name);
     form_data.append("last_name", data.last_name);
     form_data.append("email", data.email);
@@ -75,13 +72,6 @@ export default function StaffSignUp() {
       [e.target.name]: e.target.value,
     });
     console.log(userData)
-  };
-
-  const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.files[0],
-    });
   };
     
     const onSubmit = async ()=> {
@@ -233,24 +223,6 @@ export default function StaffSignUp() {
                     autoComplete="phone"
                     error={!!errors.phone}
                     helperText={errors.phone ? errors.phone.message : ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                    {...register("image", {
-                        required: "Image is required",
-                    })}
-                    onChange={handleImageChange}
-                    required
-                    fullWidth
-                    focused
-                    id="image"
-                    label="Profile Picture"
-                    name="image"
-                    type="file"
-                    autoComplete="image"
-                    error={!!errors.image}
-                    helperText={errors.image ? errors.image.message : ''}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>

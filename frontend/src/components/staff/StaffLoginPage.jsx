@@ -13,7 +13,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
-// import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -32,11 +32,11 @@ const theme = createTheme();
 
 export default function StaffLoginPage() {
     
-    let {loginStaff} = useContext(AuthContext)
+    let {loginStaff, staff} = useContext(AuthContext)
     
-    // if(user){
-    //     return <Navigate to='/home' />
-    // }
+    if(staff){
+        return <Navigate to='/staff/home' />
+    }
 
     const toLink = [
         {link:'/staff/verify', label:"Don't have an account? Sign Up"}, 

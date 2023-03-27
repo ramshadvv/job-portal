@@ -66,8 +66,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
- function CompanySignup() {
-    const navigate = useNavigate();
+ function StaffList() {
     const {ownerToken} = useContext(AuthContext)
     const [loading, setLoading] = useState(false)
     const [rows, setRows] = useState([])
@@ -262,5 +261,5 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
    );
  }
  
- export default CompanySignup;
+ export default StaffList;
  

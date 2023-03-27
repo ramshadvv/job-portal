@@ -23,7 +23,6 @@ import { MainListItems, secondaryListItems } from './utils/ListItems';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import AuthContext from '../../context/AuthContext';
-import Spinner from '../../utils/Spinner';
 import Swal from 'sweetalert2'
 
 import Menu from '@mui/material/Menu';
@@ -95,7 +94,6 @@ function DashboardContent() {
   const {ownerToken} = useContext(AuthContext);
   const [open, setOpen] = React.useState(true);
   const [cmp, setCmp] = useState();
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -115,36 +113,21 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  const toAddCompany = () =>{
-    navigate('/owner/addcompany')
-  }
-
   const fetchCmpDetails=async(ownerToken)=>{
     try{
-      setLoading(true)
       const result = await axios.get(`${BaseUrl}/companydetails/`, {
         headers: {"Authorization" : `Bearer ${ownerToken}`} 
       })
       setCmp(result.data)
-      setLoading(false)
 
     }catch(err){
-      console.log(err)
-      Swal.fire({
-        text:'Please register your Company!!',
-        icon:'error'
-    })
-      setLoading(false)
+      console.log(err);
     }
   }
 
   useEffect(() => {
     fetchCmpDetails(ownerToken)
   }, []);
-
-  if(loading){
-    return <Spinner />
-  }
 
   return (
     <>
@@ -186,16 +169,7 @@ function DashboardContent() {
               sx={{ marginRight:'1rem' }}
             > {cmp.id}
               
-            </Button  >:
-            <Button
-              onClick={toAddCompany}
-              component="h1"
-              color="inherit"
-              noWrap
-              sx={{ marginRight:'1rem' }}
-            > Register
-              
-            </Button  >}
+            </Button  >:''}
 
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">

@@ -131,14 +131,20 @@ export const AuthProvider = ({children})=> {
             password: e.target.password.value,
           }),
         });
+        console.log(response)
         const data = await response.json();
         if (response.status === 200) {
           setAdminToken(data.access);
           setAdmin(jwt_decode(data.access));
           localStorage.setItem("adminToken", JSON.stringify(data));
           navigate('/admin/home');
-        
-      };
+        }
+        else{
+            Swal.fire({
+                text:'Invalid Credentials!!',
+                icon:'error'
+            })
+        }
     }
 
     let logoutAdmin = () => {
@@ -375,6 +381,7 @@ export const AuthProvider = ({children})=> {
         logoutOwner:logoutOwner,
         loginStaff:loginStaff,
         logoutStaff:logoutStaff,
+        fetchUserDetails:fetchUserDetails,
     };
  
      return (

@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status, permissions
 from .serializers import *
 from api.serializers import *
+from staff.serializers import *
 # Create your views here.
 
 class CompanyView(APIView):
@@ -47,12 +48,12 @@ class CompanyView(APIView):
 def companyDetails(request):
     user = request.user
     if user:
-        cmp = Company.objects.get(owner = user)
-        serializer = CompanySerializer(instance=cmp)
-        if serializer:
+        if Company.objects.filter(owner = user):
+            cmp = Company.objects.get(owner = user)
+            serializer = CompanySerializer(instance=cmp)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'errors':'company is not exists'},status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -92,3 +93,53 @@ def BlockUser(request, id):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class PurchasePlanView(APIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    def get(self, request):
+        user = request.user
+        if PurchasePlan.objects.filter(owner=user, is_expired=False).exists():
+            item = PurchasePlan.objects.get(owner=user, is_expired=False)
+            if item.get_plan_status() == False:
+                item.is_expired = True
+                item.save()
+                return Response({'errors':'plan is expired'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = PlanPurchaseSerializer(instance=item)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'errors':'plan is not exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        if PurchasePlan.objects.filter(owner__username = request.user, is_expired=False):
+            return Response({'errors':'plan is already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+        plan = PlanPurchaseSerializer(data = data, context={'request': request})
+        if plan.is_valid():
+            plan.save()
+            return Response(plan.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(plan.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class JobPostView(APIView):
+    permission_classes = [permissions.IsAuthenticated, ]
+    def get(self, request):
+        user = Accounts.objects.get(username = request.user)
+        if JobPost.objects.filter(job_company=user.company_id, is_approved=True, is_deleted=False):
+            jobs = JobPost.objects.filter(job_company=user.company_id, is_approved=True, is_deleted=False)
+            serializer = JobPostSerializer(instance=jobs, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            error = {
+                'error':'Job are not posted'
+            }
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def GetPostedStaff(request, id):
+    item = Accounts.objects.values_list('username','company_id','email','phone').get(id=id)
+    data = {
+        'username':item[0],
+        'company_id':item[1],
+        'email':item[2],
+        'phone':item[3]
+    }
+    return Response(data, status=status.HTTP_200_OK)
